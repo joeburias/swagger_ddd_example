@@ -1,0 +1,137 @@
+openapi: 3.0.0
+info:
+  title: API para consultar Movimientos
+  description: Servicio encargado de devolver los movimientos de cuentas de depósitos
+  contact:
+    email: jsburban@bancolombia.com.co
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+  version: 1.0.0
+paths:
+  /cuentas/transacciones/lista-de-movimientos:
+    post:
+      tags:
+      - Movimientos de Cuenta
+      summary: searches inventory
+      description: |
+        Permite obtener los movimientos de una cuenta de depósitos específica
+      operationId: POST_listarMovimientos
+      parameters:
+      - name: message-id
+        in: header
+        description: Identificador de transacción. Se recomienda usar un UUID para el valor de este campo.
+        schema:
+          type: string
+          maximum: 128
+        required: true
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/Movimiento'
+      responses:
+        "200":
+          description: search results matching criteria
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/InventoryItem'
+        "400":
+          description: bad input parameter
+    head:
+      responses:
+        '200':
+          description: 200 OK
+components:
+  schemas:
+    Movimiento:
+      required:
+      - movimientoId
+      - fecha
+      - oficina
+      - descripcion
+      - referencia
+      - monto
+      - tipo
+      properties:
+        fecha:
+          type: string
+          format: date
+          description: 'Fecha efectiva en la cual se hace la afectación del saldo de la cuenta, puede ser de días anteriores.'
+          example: '2020-09-15'
+        transactionDate:
+          type: string
+          format: date
+          description: 'Fecha de vinculación y aplicación de las transacciones en la cuenta.'
+          example: '2020-09-15'
+        id:
+          type: string
+          description: Código de identificación del movimiento.
+          example: '8316'
+          maxLength: 6
+          minLength: 1
+        descripcion:
+          type: string
+          description: Descripción o nombre del movimiento.
+          example: Abono preautorizado donación
+          maxLength: 50
+        oficina:
+            $ref: '#/components/schemas/Oficina'
+        referencia:
+          type: string
+          description: 'Texto en el cual puede indicar una referencia o valor útil para el cliente. Ejemplo: número de documento de identidad, código de una factura.'
+          example: '1098912344'
+          maxLength: 50
+        monto:
+          type: number
+          format: float
+          description: Valor del movimiento.
+          maxLength: 21
+          minLength: 1
+          example: 100000
+    Oficina:
+      required:
+        - oficinaId
+        - nombre
+
+
+    InventoryItem:
+      required:
+      - id
+      - manufacturer
+      - name
+      - releaseDate
+      type: object
+      properties:
+        id:
+          type: string
+          format: uuid
+          example: d290f1ee-6c54-4b01-90e6-d701748f0851
+        name:
+          type: string
+          example: Widget Adapter
+        releaseDate:
+          type: string
+          format: date-time
+          example: 2016-08-29T09:12:33.001Z
+        manufacturer:
+          $ref: '#/components/schemas/Manufacturer'
+    Manufacturer:
+      required:
+      - name
+      type: object
+      properties:
+        name:
+          type: string
+          example: ACME Corporation
+        homePage:
+          type: string
+          format: url
+          example: https://www.acme-corp.com
+        phone:
+          type: string
+          example: 408-867-5309
