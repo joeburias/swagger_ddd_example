@@ -32,16 +32,16 @@ paths:
             schema:
               $ref: '#/components/schemas/Movimiento'
       responses:
-        "200":
-          description: search results matching criteria
+        '200':
           content:
             application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/InventoryItem'
+                schema:
+                  $ref: '#/components/schemas/Movimiento'
+          description: Respuesta exitosa.
         "400":
-          description: bad input parameter
+          description: Parametros erroneos.
+        "500":
+          description: Error del servidor.
     head:
       responses:
         '200':
@@ -68,7 +68,7 @@ components:
           format: date
           description: 'Fecha de vinculación y aplicación de las transacciones en la cuenta.'
           example: '2020-09-15'
-        id:
+        movimientoId:
           type: string
           description: Código de identificación del movimiento.
           example: '8316'
@@ -93,45 +93,26 @@ components:
           maxLength: 21
           minLength: 1
           example: 100000
+        tipo:
+          type: string
+          description: Indica el tipo de movimiento.
+          example: DEBITO
+          enum:
+            - DEBITO
+            - CREDITO
     Oficina:
       required:
         - oficinaId
         - nombre
-
-
-    InventoryItem:
-      required:
-      - id
-      - manufacturer
-      - name
-      - releaseDate
-      type: object
       properties:
-        id:
+        movimientoId:
           type: string
-          format: uuid
-          example: d290f1ee-6c54-4b01-90e6-d701748f0851
-        name:
+          description: Código de identificación del movimiento.
+          example: '8316'
+          maxLength: 6
+          minLength: 1
+        nombre:
           type: string
-          example: Widget Adapter
-        releaseDate:
-          type: string
-          format: date-time
-          example: 2016-08-29T09:12:33.001Z
-        manufacturer:
-          $ref: '#/components/schemas/Manufacturer'
-    Manufacturer:
-      required:
-      - name
-      type: object
-      properties:
-        name:
-          type: string
-          example: ACME Corporation
-        homePage:
-          type: string
-          format: url
-          example: https://www.acme-corp.com
-        phone:
-          type: string
-          example: 408-867-5309
+          description: Nombre de la oficina.
+          example: Cajero 1011 Unicentro Pasto
+          maxLength: 50
